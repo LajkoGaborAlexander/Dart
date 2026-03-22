@@ -33,25 +33,22 @@ class GamePage extends StatefulWidget {
 }
 
 class _GamePageState extends State<GamePage> {
-  // Madár koordináták
   double birdY = 0;
   double velocity = 0;
-  double gravity = 800; // pixels/sec^2
-  double jumpVelocity = -250; // pixels/sec
+  double gravity = 800;
+  double jumpVelocity = -250;
   late Timer gameTimer;
 
-  // Képernyő méretek
   late double screenWidth;
   late double screenHeight;
 
   bool gameStarted = false;
   int score = 0;
 
-  // Csövek
   List<Pipe> pipes = [];
   double pipeWidth = 60;
-  double pipeGap = 200; // elég széles rés a csövek között
-  double pipeSpeed = 150; // pixels/sec
+  double pipeGap = 200;
+  double pipeSpeed = 150;
 
   double birdSize = 40;
 
@@ -65,7 +62,6 @@ class _GamePageState extends State<GamePage> {
     birdY = screenHeight / 2 - birdSize / 2;
     score = 0;
 
-    // Csövek inicializálása
     pipes = [
       Pipe(screenWidth + 100, randomPipeHeight()),
       Pipe(screenWidth + 300, randomPipeHeight()),
@@ -77,7 +73,6 @@ class _GamePageState extends State<GamePage> {
       velocity += gravity * dt;
       birdY += velocity * dt;
 
-      // Csövek mozgatása
       for (var pipe in pipes) {
         pipe.x -= pipeSpeed * dt;
         if (pipe.x < -pipeWidth) {
@@ -87,24 +82,26 @@ class _GamePageState extends State<GamePage> {
         }
       }
 
-      // Hitbox ellenőrzés
       Rect birdRect = Rect.fromLTWH(screenWidth / 4, birdY, birdSize, birdSize);
       for (var pipe in pipes) {
         Rect topPipe = Rect.fromLTWH(pipe.x, 0, pipeWidth, pipe.height);
-        Rect bottomPipe = Rect.fromLTWH(pipe.x, pipe.height + pipeGap, pipeWidth, screenHeight - pipe.height - pipeGap);
+        Rect bottomPipe = Rect.fromLTWH(
+          pipe.x,
+          pipe.height + pipeGap,
+          pipeWidth,
+          screenHeight - pipe.height - pipeGap,
+        );
         if (birdRect.overlaps(topPipe) || birdRect.overlaps(bottomPipe)) {
           timer.cancel();
           gameOver();
         }
 
-        // Pontszám
         if (!pipe.scored && pipe.x + pipeWidth < screenWidth / 4) {
           score++;
           pipe.scored = true;
         }
       }
 
-      // Képernyő alja/felső széle
       if (birdY < 0 || birdY + birdSize > screenHeight) {
         timer.cancel();
         gameOver();
@@ -136,7 +133,7 @@ class _GamePageState extends State<GamePage> {
               setState(() {});
             },
             child: const Text("Restart"),
-          )
+          ),
         ],
       ),
     );
@@ -180,7 +177,10 @@ class _GamePageState extends State<GamePage> {
       child: Container(
         width: birdSize,
         height: birdSize,
-        decoration: const BoxDecoration(color: Colors.yellow, shape: BoxShape.circle),
+        decoration: const BoxDecoration(
+          color: Colors.yellow,
+          shape: BoxShape.circle,
+        ),
       ),
     );
   }
@@ -215,11 +215,17 @@ class _GamePageState extends State<GamePage> {
             Positioned(
               top: 50,
               left: 20,
-              child: Text("Score: $score", style: const TextStyle(fontSize: 30, color: Colors.white)),
+              child: Text(
+                "Score: $score",
+                style: const TextStyle(fontSize: 30, color: Colors.white),
+              ),
             ),
             if (!gameStarted)
               const Center(
-                child: Text("TAP TO START", style: TextStyle(fontSize: 24, color: Colors.white)),
+                child: Text(
+                  "TAP TO START",
+                  style: TextStyle(fontSize: 24, color: Colors.white),
+                ),
               ),
           ],
         ),
